@@ -8,7 +8,7 @@ session_start();
 
 $servername = "localhost";
 $username = "root";
-$password = "";
+$password = "password";
 $dbname = "material_harbour";
 
 // Create connection
