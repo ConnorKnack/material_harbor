@@ -15,3 +15,7 @@
     * Start Apache Server
     * Start MySQL Server
 * Visit localhost:8000 in web browser
+
+## Server
+* Directory
+  * `/var/www/material_harbour`
