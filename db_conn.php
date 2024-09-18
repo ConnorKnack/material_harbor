@@ -9,7 +9,7 @@ session_start();
 $servername = "localhost";
 $username = "root";
 $password = "password";
-$dbname = "material_harbour";
+$dbname = "material_harbor";
 
 // Create connection
 $conn = new mysqli($servername, $username, $password, $dbname);

@@ -10,14 +10,14 @@ if (isLoggedIn()) {
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Material Harbour</title>
+        <title>Material Harbor</title>
         <!-- Bootstrap CSS -->
         <link rel="stylesheet" href="./assets/css/bootstrap.min.css">
     </head>
 
     <body>
         <div class="container mt-5">
-            <h1 class="text-center mb-4">Welcome to Material Harbour</h1>
+            <h1 class="text-center mb-4">Welcome to Material Harbor</h1>
             <p class="text-center mb-4">Please choose your role to proceed:</p>
             <div class="row justify-content-center">
                 <div class="col-md-4 col-sm-6 mb-4">

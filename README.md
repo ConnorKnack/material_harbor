@@ -1,4 +1,4 @@
-# Material Harbour
+# Material Harbor
 
 ## Local Development
 
@@ -18,4 +18,4 @@
 
 ## Server
 * Directory
-  * `/var/www/material_harbour`
+  * `/var/www/material_harbor`

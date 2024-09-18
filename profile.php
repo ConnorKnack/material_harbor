@@ -122,7 +122,7 @@ $conn->close();
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Material Harbour</title>
+        <title>Material Harbor</title>
         <!-- Bootstrap CSS -->
         <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css" />
         <link rel="stylesheet" href="./assets/css/bootstrap.min.css">
