@@ -45,8 +45,7 @@ if (isLoggedIn()) {
                 <div class="col-md-4 col-sm-6 mb-4">
                     <div class="card h-100">
                         <div class="card-body text-center">
-                            <h5 class="card-title">Search Manufacturer</h5>
-                            <p class="card-text">Search for a manufacturer.</p>
+                            <h6 class="card-title">Search for a Manufacturer</h6>
                             <a href="search-materials.php?type=Manufacturer" class="btn btn-primary">Search
                                 Manufacturer</a>
                         </div>
@@ -55,8 +54,7 @@ if (isLoggedIn()) {
                 <div class="col-md-4 col-sm-6 mb-4">
                     <div class="card h-100">
                         <div class="card-body text-center">
-                            <h5 class="card-title">Search Supplier</h5>
-                            <p class="card-text">Search for a supplier.</p>
+                            <h6 class="card-title">Search for a Supplier</h6>
                             <a href="search-materials.php?type=Supplier" class="btn btn-info">Search Supplier</a>
                         </div>
                     </div>
