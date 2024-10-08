@@ -1,0 +1,20 @@
+/* Grid Layout for Checkboxes */
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); /* Flexible grid layout */
+    grid-gap: 15px;
+  }
+  
+  .form-check {
+    margin: 10px 0;
+  }
+  
+  .form-group h4, .form-group h5 {
+    margin-bottom: 15px;
+    font-weight: bold;
+  }
+  
+  .nestedSelectionContainer {
+    margin-top: 20px;
+  }
+  

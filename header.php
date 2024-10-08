@@ -18,8 +18,15 @@
                     ?>
                     <li class="nav-item">
                         <a class="nav-link <?php echo $active = ($page == 'profile') ? 'active' : ''; ?>"
-                            href="profile.php?userType=<?php echo strtolower($_SESSION['userType']); ?>&userID=<?php echo $_SESSION['userId']; ?>"><span class="text-dark">Hey
-                            <span class="text-success"><?php echo $user_type = (isset($_SESSION['companyName'])) ? $_SESSION['companyName'] : 'Guest'; ?></span>!</span></a>
+                            href="profile.php?userType=<?php echo strtolower($_SESSION['userType']); ?>&userID=<?php echo $_SESSION['userId']; ?>">
+                            <span class="text-dark">Hey <span class="text-success">
+                            <?php echo $user_type = (isset($_SESSION['companyName'])) ? $_SESSION['companyName'] : 'Guest'; ?>
+                            </span>!</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link <?php echo $active = ($page == 'edit-profile') ? 'active' : ''; ?>"
+                            href="edit-profile.php?userType=<?php echo strtolower($_SESSION['userType']); ?>&userID=<?php echo $_SESSION['userId']; ?>">Edit Profile</a>
                     </li>
                     <?php
                 }

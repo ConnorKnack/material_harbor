@@ -107,7 +107,6 @@ if ($userType === 'manufacturer' || $userType === 'supplier') {
     // print_r($materials);
     // Close the statement and connection
     $stmt1->close();
-
     $stmt->close();
 } else {
     $info = "<div class='alert alert-danger'>Invalid user type specified.</div>";
@@ -141,20 +140,20 @@ $conn->close();
                     </div>
                     <div class="card-body">
                         <h5 class="card-title fw-bold text-decoration-underline">
-                            <?php echo htmlspecialchars($userData['company_name']); ?>
+                            <?php echo htmlspecialchars($userData['company_name'] ?? ''); ?>
                         </h5>
                         <p class="card-text"><strong>Location:</strong>
-                            <?php echo htmlspecialchars($userData['location']); ?></p>
-                        <p class="card-text"><strong>Email:</strong> <?php echo htmlspecialchars($userData['email']); ?></p>
+                            <?php echo htmlspecialchars($userData['location'] ?? ''); ?></p>
+                        <p class="card-text"><strong>Email:</strong> <?php echo htmlspecialchars($userData['email'] ?? ''); ?></p>
                         <p class="card-text"><strong>Phone:</strong>
-                            <?php echo htmlspecialchars($userData['contact_phone']); ?></p>
-                        <p class="card-text"><strong>Offers:</strong> <?php echo htmlspecialchars($userData['offers']); ?>
+                            <?php echo htmlspecialchars($userData['contact_phone'] ?? ''); ?></p>
+                        <p class="card-text"><strong>Offers:</strong> <?php echo htmlspecialchars($userData['offers'] ?? ''); ?>
                         </p>
                         <p class="card-text"><strong>Certification:</strong>
-                            <?php echo htmlspecialchars($userData['certification']); ?>
+                            <?php echo htmlspecialchars($userData['certification'] ?? ''); ?>
                         </p>
                         <p class="card-text"><strong>Description:</strong>
-                            <?php echo htmlspecialchars($userData['description']); ?></p>
+                            <?php echo htmlspecialchars($userData['description'] ?? ''); ?></p>
                     </div>
                 </div>
             <?php else: ?>
@@ -162,7 +161,7 @@ $conn->close();
             <?php endif; ?>
             <?php if ($userType == 'supplier' || $userType == 'manufacturer'): ?>
                 <h4 class="mt-5 text-center fw-bold mb-4">Materials Offered by
-                    <?php echo htmlspecialchars($userData['company_name']); ?></h4>
+                    <?php echo htmlspecialchars($userData['company_name'] ?? ''); ?></h4>
                 <?php
                 $actionTh = ($ownProfile) ? "<th>Action</th>" : "";
                 echo "<table class='table table-bordered' id='dataTable'>";
@@ -170,15 +169,19 @@ $conn->close();
                 echo "<tbody>";
                 foreach ($materials as $material) {
                     echo "<tr>";
-                    echo "<td>" . htmlspecialchars($material['material_standard']) . "</td>";
-                    echo "<td>" . htmlspecialchars($material['material_type']) . "</td>";
-                    echo "<td>" . htmlspecialchars($material['alloy']) . "</td>";
-                    echo "<td>" . htmlspecialchars($material['type']) . "</td>";
-                    echo "<td>" . htmlspecialchars($material['condition']) . "</td>";
-                    echo "<td>" . htmlspecialchars($material['form']) . "</td>";
+                    echo "<td>" . htmlspecialchars($material['material_standard'] ?? '') . "</td>";
+                    echo "<td>" . htmlspecialchars($material['material_type'] ?? '') . "</td>";
+                    echo "<td>" . htmlspecialchars($material['alloy'] ?? '') . "</td>";
+                    echo "<td>" . htmlspecialchars($material['type'] ?? '') . "</td>";
+                    echo "<td>" . htmlspecialchars($material['condition'] ?? '') . "</td>";
+                    echo "<td>" . htmlspecialchars($material['form'] ?? '') . "</td>";
                     if ($ownProfile == true) {
-                        // <a href='edit-material.php?materialId=".$material['id']."' class='btn btn-primary btn-sm'>Edit</a>
-                        echo "<td><span class='d-flex gap-1'><a onclick='return confirm(\"Do you really want to delete the material?\")' href='?userType=" . $userType . "&userID=" . $userID . "&deleteMaterialId=" . $material['id'] . "' class='btn btn-danger btn-sm'>Delete</a></span></td>";
+                        echo "<td>
+                                <span class='d-flex gap-1'>
+                                    <a href='edit-material.php?materialId=" . $material['id'] . "' class='btn btn-primary btn-sm'>Edit</a>
+                                    <a onclick='return confirm(\"Do you really want to delete the material?\")' href='?userType=" . $userType . "&userID=" . $userID . "&deleteMaterialId=" . $material['id'] . "' class='btn btn-danger btn-sm'>Delete</a>
+                                </span>
+                              </td>";
                     }
                     echo "</tr>";
                 }

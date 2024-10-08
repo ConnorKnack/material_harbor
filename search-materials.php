@@ -5,61 +5,57 @@ require './db_conn.php';
 //   header('Location: ./index.php');
 // }
 
-// print_r($_POST);
+// Initialize the display variables
 $show = $info = '';
 $userType = isset($_REQUEST['type']) ? $_REQUEST['type'] : 'supplier';
 
-if (strtolower($userType) === 'manufacturer') {
-    $page = 'manufacturer-search';
-} elseif (strtolower($userType) === 'supplier') {
-    $page = 'supplier-search';
-}
-// Check if the form is submitted
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit'])) {
-    // Retrieve user type from the session
-    // Sanitize and retrieve input data
-    $materialStandard = isset($_POST['material_standard']) ? trim($_POST['material_standard']) : '';
-    $materialType = isset($_POST['material_type']) ? trim($_POST['material_type']) : '';
-    $alloy = (isset($_POST['alloy']) && !empty($_POST['alloy'])) ? trim($_POST['alloy'][0]) : '';
-    if (isset($_POST['type']) && !empty($_POST['type'])) {
-        $type = trim($_POST['type'][0]);
-    } else {
-        $type = '';
-    }
-    $condition = (isset($_POST['condition']) && !empty($_POST['condition'])) ? trim($_POST['condition'][0]) : '';
-    $form = (isset($_POST['form']) && !empty($_POST['form'])) ? trim($_POST['form'][0]) : '';
-    $userId = isset($_SESSION['userId']) ? $_SESSION['userId'] : '';
+    $materialStandard = isset($_POST['material_standard']) ? $_POST['material_standard'] : []; // Array of selected raw materials
+    $subMaterials = isset($_POST['sub_material']) ? $_POST['sub_material'] : []; // Array of selected sub-materials
+    $alloys = isset($_POST['alloy']) ? $_POST['alloy'] : []; // Array of selected alloys
+    $conditions = isset($_POST['condition']) ? $_POST['condition'] : []; // Array of selected conditions
+    $forms = isset($_POST['form']) ? $_POST['form'] : []; // Array of selected forms
 
-    // Manufacturer: List all materials and corresponding suppliers
+    // Convert arrays to comma-separated values for SQL IN query
+    $materialStandardStr = implode("','", array_map('trim', $materialStandard));
+    $subMaterialStr = implode("','", array_map('trim', $subMaterials));
+    $alloyStr = implode("','", array_map('trim', $alloys));
+    $conditionStr = implode("','", array_map('trim', $conditions));
+    $formStr = implode("','", array_map('trim', $forms));
 
+    // Check if it's a manufacturer or supplier search
     if (strtolower($userType) === 'manufacturer') {
         $sql = "SELECT m.*, s.company_name AS manufacturer_name
-    , s.id AS manufacturer_id
-              FROM materials m
-              JOIN manufacturers s ON m.manufacturer_id = s.id WHERE m.material_standard = '$materialStandard' AND m.material_type = '$materialType' AND m.alloy = '$alloy' AND m.type = '$type' AND m.form = '$form' AND m.condition = '$condition'";
-
+            FROM materials m
+            JOIN manufacturers s ON m.manufacturer_id = s.id
+            WHERE m.material_standard IN ('$materialStandardStr')
+            AND m.material_type IN ('$subMaterialStr')
+            AND m.alloy IN ('$alloyStr')
+            AND m.condition IN ('$conditionStr')
+            AND m.form IN ('$formStr')";
     } elseif (strtolower($userType) === 'supplier') {
         $sql = "SELECT m.*, s.company_name AS supplier_name
-    , s.id AS supplier_id
-              FROM materials m
-              JOIN suppliers s ON m.supplier_id = s.id WHERE m.material_standard = '$materialStandard' AND m.material_type = '$materialType' AND m.alloy = '$alloy' AND m.type = '$type' AND m.form = '$form' AND m.condition = '$condition'";
-
+            FROM materials m
+            JOIN suppliers s ON m.supplier_id = s.id
+            WHERE m.material_standard IN ('$materialStandardStr')
+            AND m.material_type IN ('$subMaterialStr')
+            AND m.alloy IN ('$alloyStr')
+            AND m.condition IN ('$conditionStr')
+            AND m.form IN ('$formStr')";
     }
-    // SQL query to get all materials with their suppliers
 
+    // Execute the query and display results
     $result = $conn->query($sql);
-
     if ($result->num_rows > 0) {
-        $show .= "<h2 class='text-center mt-4'>Available Materials and " . $userType . "s</h2>";
+        $show .= "<h2 class='text-center mt-4'>Available Materials and " . ucfirst($userType) . "s</h2>";
         $show .= "<table class='table table-bordered'>";
-        $show .= "<thead><tr><th>Material Standard</th><th>Material Type</th><th>Alloy</th><th>Type</th><th>Condition</th><th>Form</th><th>" . $userType . "</th></tr></thead>";
+        $show .= "<thead><tr><th>Material Standard</th><th>Sub-Material</th><th>Alloy</th><th>Condition</th><th>Form</th><th>" . ucfirst($userType) . "</th></tr></thead>";
         $show .= "<tbody>";
         while ($row = $result->fetch_assoc()) {
             $show .= "<tr>";
             $show .= "<td>" . htmlspecialchars($row['material_standard']) . "</td>";
             $show .= "<td>" . htmlspecialchars($row['material_type']) . "</td>";
             $show .= "<td>" . htmlspecialchars($row['alloy']) . "</td>";
-            $show .= "<td>" . htmlspecialchars($row['type']) . "</td>";
             $show .= "<td>" . htmlspecialchars($row['condition']) . "</td>";
             $show .= "<td>" . htmlspecialchars($row['form']) . "</td>";
             if (strtolower($userType) === 'manufacturer') {
@@ -69,8 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit'])) {
             }
             $show .= "</tr>";
         }
-        $show .= "</tbody>";
-        $show .= "</table>";
+        $show .= "</tbody></table>";
     } else {
         $info = "<p class='alert alert-danger'>No materials found.</p>";
     }
@@ -78,8 +73,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit'])) {
 
 // Close the database connection
 $conn->close();
-
 ?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -89,6 +85,7 @@ $conn->close();
         <title>Material Harbor</title>
         <!-- Bootstrap CSS -->
         <link rel="stylesheet" href="./assets/css/bootstrap.min.css">
+        <link rel="stylesheet" href="./assets/css/style.css">
     </head>
 
     <body>
@@ -99,10 +96,7 @@ $conn->close();
             <h2 class="text-center">Search Materials / <?php echo $userType; ?></h2>
             <?php echo $info; ?>
             <form action="" method="POST" novalidate class="needs-validation mb-5">
-                <div id="material-selection">
-                    <select id="material-select" required name="material_standard" class="form-control">
-                    </select>
-                </div>
+                <div id="material-selection"></div>
                 <div class="text-center mt-3">
                     <button type="submit" class="btn btn-primary" name="submit">Submit</button>
                 </div>
