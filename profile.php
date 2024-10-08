@@ -162,6 +162,12 @@ $conn->close();
             <?php if ($userType == 'supplier' || $userType == 'manufacturer'): ?>
                 <h4 class="mt-5 text-center fw-bold mb-4">Materials Offered by
                     <?php echo htmlspecialchars($userData['company_name'] ?? ''); ?></h4>
+                    <?php if ($ownProfile == true): ?>
+                <!-- Add new material button -->
+                <div class="text-end mb-3">
+                    <a href="select-materials.php?userType=<?php echo $userType; ?>&userID=<?php echo $userID; ?>" class="btn btn-success">Add New Material</a>
+                </div>
+            <?php endif; ?>
                 <?php
                 $actionTh = ($ownProfile) ? "<th>Action</th>" : "";
                 echo "<table class='table table-bordered' id='dataTable'>";
