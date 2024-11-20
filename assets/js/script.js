@@ -20,137 +20,124 @@
 })()
 
 $(document).ready(function () {
-  // Load JSON data
-  $.getJSON('data.json', function (data) {
-      var materialSelectContainer = $('#material-selection');
-      var materialGrid = $('<div>', { class: 'grid-container' });
-      materialSelectContainer.append(materialGrid);
+    // Load JSON data
+    $.getJSON('data.json', function (data) {
+        var materialSelectContainer = $('#material-selection');
+        var materialGrid = $('<div>', { class: 'grid-container' });
+        materialSelectContainer.append(materialGrid);
 
-      // Display raw materials as checkboxes (Aluminum, ALClad, etc.)
-      $.each(data.Material, function (material, subcategories) {
-          var materialDiv = $('<div>', { class: 'form-check' });
-          var materialCheckbox = $('<input>', {
-              type: 'checkbox',
-              class: 'form-check-input',
-              id: material,
-              name: 'material_standard[]',
-              value: material
-          });
-          var materialLabel = $('<label>', {
-              class: 'form-check-label',
-              for: material,
-              text: material
-          });
+        // Display raw materials as radio buttons
+        $.each(data.Material, function (material, subcategories) {
+            var materialDiv = $('<div>', { class: 'form-check' });
+            var materialRadio = $('<input>', {
+                type: 'radio',
+                class: 'form-check-input',
+                id: material,
+                name: 'material_standard',
+                value: material,
+            });
+            var materialLabel = $('<label>', {
+                class: 'form-check-label',
+                for: material,
+                text: material,
+            });
 
-          materialDiv.append(materialCheckbox).append(materialLabel);
-          materialGrid.append(materialDiv);
-      });
+            materialDiv.append(materialRadio).append(materialLabel);
+            materialGrid.append(materialDiv);
+        });
 
-      // Handle Raw Material selection
-      materialSelectContainer.off('change').on('change', "input[name='material_standard[]']", function () {
-          var selectedMaterials = $("input[name='material_standard[]']:checked").map(function () {
-              return this.value;
-          }).get();
+        // Handle Raw Material selection
+        materialSelectContainer.off('change').on('change', "input[name='material_standard']", function () {
+            var selectedMaterial = $("input[name='material_standard']:checked").val();
+            clearSubSections();
 
-          clearSubSections();
+            if (data.Material[selectedMaterial] && Object.keys(data.Material[selectedMaterial]).length > 0) {
+                var subMaterialContainer = $('#sub-material-select');
+                if (subMaterialContainer.length === 0) {
+                    subMaterialContainer = $('<div>', { id: 'sub-material-select', class: 'form-group mt-3' });
+                    materialSelectContainer.append(subMaterialContainer);
+                }
 
-          selectedMaterials.forEach(function (selectedMaterial) {
-              if (data.Material[selectedMaterial] && Object.keys(data.Material[selectedMaterial]).length > 0) {
-                  var subMaterialContainer = $('#sub-material-select');
-                  if (subMaterialContainer.length === 0) {
-                      subMaterialContainer = $('<div>', { id: 'sub-material-select', class: 'form-group mt-3' });
-                      materialSelectContainer.append(subMaterialContainer);
-                  }
+                // Label for Sub-Material selection
+                var subMaterialLabel = $('<h4>').text("Select Sub-Material");
+                subMaterialContainer.append(subMaterialLabel);
 
-                  // Label for Sub-Material selection
-                  var subMaterialLabel = $('<h4>').text(selectedMaterial + ' > Select Sub-Material');
-                  subMaterialContainer.append(subMaterialLabel);
+                var subMaterialGrid = $('<div>', { class: 'grid-container' });
 
-                  var subMaterialGrid = $('<div>', { class: 'grid-container' });
+                $.each(data.Material[selectedMaterial], function (subMaterial, options) {
+                    var subMaterialDiv = $('<div>', { class: 'form-check' });
+                    var subMaterialRadio = $('<input>', {
+                        type: 'radio',
+                        class: 'form-check-input',
+                        id: subMaterial,
+                        name: 'sub_material',
+                        value: subMaterial,
+                    });
+                    var subMaterialLabel = $('<label>', {
+                        class: 'form-check-label',
+                        for: subMaterial,
+                        text: subMaterial,
+                    });
 
-                  $.each(data.Material[selectedMaterial], function (subMaterial, options) {
-                      var subMaterialDiv = $('<div>', { class: 'form-check' });
-                      var subMaterialCheckbox = $('<input>', {
-                          type: 'checkbox',
-                          class: 'form-check-input',
-                          id: subMaterial,
-                          name: 'sub_material[]',
-                          value: subMaterial
-                      });
-                      var subMaterialLabel = $('<label>', {
-                          class: 'form-check-label',
-                          for: subMaterial,
-                          text: subMaterial
-                      });
+                    subMaterialDiv.append(subMaterialRadio).append(subMaterialLabel);
+                    subMaterialGrid.append(subMaterialDiv);
+                });
 
-                      subMaterialDiv.append(subMaterialCheckbox).append(subMaterialLabel);
-                      subMaterialGrid.append(subMaterialDiv);
-                  });
+                subMaterialContainer.append(subMaterialGrid);
 
-                  subMaterialContainer.append(subMaterialGrid);
+                // Handle nested selections (Alloy, Condition, Form)
+                subMaterialContainer.off('change').on('change', "input[name='sub_material']", function () {
+                    var selectedSubMaterial = $("input[name='sub_material']:checked").val();
+                    clearNestedSections();
 
-                  // Handle nested selections (Alloy, Condition, Form)
-                  subMaterialContainer.off('change').on('change', "input[name='sub_material[]']", function () {
-                      var selectedSubMaterials = $("input[name='sub_material[]']:checked").map(function () {
-                          return this.value;
-                      }).get();
+                    if (data.Material[selectedMaterial][selectedSubMaterial]) {
+                        let nestedSelectionContainer = $('<div>', { class: 'nestedSelectionContainer' });
 
-                      clearNestedSections();
+                        $.each(data.Material[selectedMaterial][selectedSubMaterial], function (nodeType, nodeOptions) {
+                            var nodeLabel = $('<h5>').text("Select " + nodeType);
+                            nestedSelectionContainer.append(nodeLabel);
 
-                      selectedSubMaterials.forEach(function (subMaterial) {
-                          var subNodeOptions = data.Material[selectedMaterial][subMaterial];
-                          if (subNodeOptions && Object.keys(subNodeOptions).length > 0) {
-                              let nestedSelectionContainer = $('<div>', { class: 'nestedSelectionContainer' });
+                            var nodeGrid = $('<div>', { class: 'grid-container' });
 
-                              $.each(subNodeOptions, function (nodeType, nodeOptions) {
-                                  var nodeLabel = $('<h5>').text(selectedMaterial + ' > ' + subMaterial + ' > ' + nodeType);
-                                  nestedSelectionContainer.append(nodeLabel);
+                            nodeOptions.forEach(function (option) {
+                                var optionDiv = $('<div>', { class: 'form-check' });
+                                var optionRadio = $('<input>', {
+                                    type: 'radio',
+                                    class: 'form-check-input',
+                                    id: option,
+                                    name: nodeType.toLowerCase(),
+                                    value: option,
+                                });
+                                var optionLabel = $('<label>', {
+                                    class: 'form-check-label',
+                                    for: option,
+                                    text: option,
+                                });
 
-                                  var nodeGrid = $('<div>', { class: 'grid-container' });
+                                optionDiv.append(optionRadio).append(optionLabel);
+                                nodeGrid.append(optionDiv);
+                            });
 
-                                  nodeOptions.forEach(function (option) {
-                                      var optionDiv = $('<div>', { class: 'form-check' });
-                                      var optionCheckbox = $('<input>', {
-                                          type: 'checkbox',
-                                          class: 'form-check-input',
-                                          id: option,
-                                          name: nodeType.toLowerCase() + '[]',
-                                          value: option
-                                      });
-                                      var optionLabel = $('<label>', {
-                                          class: 'form-check-label',
-                                          for: option,
-                                          text: option
-                                      });
+                            nestedSelectionContainer.append(nodeGrid);
+                        });
 
-                                      optionDiv.append(optionCheckbox).append(optionLabel);
-                                      nodeGrid.append(optionDiv);
-                                  });
+                        materialSelectContainer.append(nestedSelectionContainer);
+                    }
+                });
+            }
+        });
 
-                                  nestedSelectionContainer.append(nodeGrid);
-                              });
+        // Clear the sub-material and nested selections
+        function clearSubSections() {
+            $('#sub-material-select').remove();
+            clearNestedSections();
+        }
 
-                              materialSelectContainer.append(nestedSelectionContainer);
-                          }
-                      });
-                  });
-              }
-          });
-      });
-
-      // Clear the sub-material and nested selections
-      function clearSubSections() {
-          $('#sub-material-select').remove();
-          clearNestedSections();
-      }
-
-      function clearNestedSections() {
-          $('.nestedSelectionContainer').remove();
-      }
-  });
+        function clearNestedSections() {
+            $('.nestedSelectionContainer').remove();
+        }
+    });
 });
-
-
 
 function checkFormValidity() {
   $('#submit-btn').prop('disabled', false);

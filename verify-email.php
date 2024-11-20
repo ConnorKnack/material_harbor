@@ -100,6 +100,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['verifyOtp'])) {
                 </div>
             </div>
         </div>
+        <?php include './footer.php'; ?>
         <!-- jQuery and Bootstrap JS -->
         <script src="./assets/js/jquery-3.6.1.min.js"></script>
         <script src="./assets/js/bootstrap.bundle.min.js"></script>

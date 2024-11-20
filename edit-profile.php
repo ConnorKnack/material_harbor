@@ -58,15 +58,83 @@ $conn->close();
 
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Profile - Material Harbor</title>
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="./assets/css/bootstrap.min.css">
-</head>
+    <link rel="stylesheet" href="./assets/css/style.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
 
+        .container {
+            max-width: 800px;
+        }
+
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .card-header {
+            background: linear-gradient(45deg, #0047ab, #0056e1);
+            color: #fff;
+            padding: 1.5rem;
+        }
+
+        .card-header h4 {
+            margin: 0;
+            font-weight: 700;
+        }
+
+        .card-body {
+            padding: 2rem;
+            background: #ffffff;
+        }
+
+        .card-footer {
+            padding: 1rem 2rem;
+            background: #f1f3f5;
+        }
+
+        .form-label {
+            font-weight: 600;
+        }
+
+        .form-control {
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .form-control:focus {
+            border-color: #0047ab;
+            box-shadow: 0 0 5px rgba(0, 71, 171, 0.3);
+        }
+
+        .btn-primary {
+            background-color: #0047ab;
+            border: none;
+            font-weight: 600;
+            padding: 0.6rem 1.2rem;
+        }
+
+        .btn-primary:hover {
+            background-color: #003580;
+        }
+
+        .alert {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+    </style>
+</head>
 <body>
     <?php include './header.php'; ?>
     <div class="container mt-5 mb-5">
@@ -122,10 +190,9 @@ $conn->close();
             <div class="alert alert-danger">No profile data available.</div>
         <?php endif; ?>
     </div>
-
+    <?php include './footer.php'; ?>
     <!-- jQuery and Bootstrap JS -->
     <script src="./assets/js/jquery-3.6.1.min.js"></script>
     <script src="./assets/js/bootstrap.bundle.min.js"></script>
 </body>
-
 </html>

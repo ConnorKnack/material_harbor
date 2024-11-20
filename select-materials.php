@@ -13,13 +13,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit'])) {
     // Retrieve user type from the session
     $userType = isset($_SESSION['userType']) ? $_SESSION['userType'] : 'Guest';
 
-    // Retrieve and sanitize input data
-    $materialStandard = isset($_POST['material_standard']) ? $_POST['material_standard'] : []; // Array of selected raw materials
-    $subMaterials = isset($_POST['sub_material']) ? $_POST['sub_material'] : []; // Array of selected sub-materials
-    $alloys = isset($_POST['alloy']) ? $_POST['alloy'] : []; // Array of selected alloys
-    $types = isset($_POST['type']) ? $_POST['type'] : []; // Array of selected types
-    $conditions = isset($_POST['condition']) ? $_POST['condition'] : []; // Array of selected conditions
-    $forms = isset($_POST['form']) ? $_POST['form'] : []; // Array of selected forms
+    // Retrieve and sanitize input data (treating radio button inputs as single values)
+    $materialStandard = isset($_POST['material_standard']) ? $_POST['material_standard'] : ''; // Single selected material
+    $subMaterials = isset($_POST['sub_material']) ? $_POST['sub_material'] : ''; // Single selected sub-material
+    $alloys = isset($_POST['alloy']) ? $_POST['alloy'] : ''; // Single selected alloy
+    $types = isset($_POST['type']) ? $_POST['type'] : ''; // Single selected type
+    $conditions = isset($_POST['condition']) ? $_POST['condition'] : ''; // Single selected condition
+    $forms = isset($_POST['form']) ? $_POST['form'] : ''; // Single selected form
 
     $userId = isset($_SESSION['userId']) ? $_SESSION['userId'] : '';
 
@@ -32,61 +32,46 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit'])) {
         $sql_field = 'supplier_id';
     }
 
-    // Include all arrays in max() calculation
-    $maxItems = max(
-        count($materialStandard),
-        count($subMaterials),
-        count($alloys),
-        count($types),
-        count($conditions),
-        count($forms)
-    );
+    // Escape values to prevent SQL injection
+    $materialStandardEsc = mysqli_real_escape_string($conn, $materialStandard);
+    $subMaterialEsc = mysqli_real_escape_string($conn, $subMaterials);
+    $alloyEsc = mysqli_real_escape_string($conn, $alloys);
+    $typeEsc = mysqli_real_escape_string($conn, $types);
+    $conditionEsc = mysqli_real_escape_string($conn, $conditions);
+    $formEsc = mysqli_real_escape_string($conn, $forms);
 
-    // Process each material entry
-    for ($i = 0; $i < $maxItems; $i++) {
-        $materialStandardValue = $materialStandard[$i] ?? '';
-        $subMaterialValue = $subMaterials[$i] ?? '';
-        $alloy = $alloys[$i] ?? '';
-        $type = $types[$i] ?? '';
-        $condition = $conditions[$i] ?? '';
-        $form = $forms[$i] ?? '';
+    // Check if the material with the same details already exists
+    $sql1 = "SELECT * FROM materials WHERE material_standard = '$materialStandardEsc' 
+             AND material_type = '$subMaterialEsc' 
+             AND alloy = '$alloyEsc' 
+             AND `type` = '$typeEsc' 
+             AND `form` = '$formEsc' 
+             AND `condition` = '$conditionEsc' 
+             AND $sql_condition";
+    $checkSql1 = mysqli_query($conn, $sql1);
 
-        // Escape values to prevent SQL injection
-        $materialStandardEsc = mysqli_real_escape_string($conn, $materialStandardValue);
-        $subMaterialEsc = mysqli_real_escape_string($conn, $subMaterialValue);
-        $alloyEsc = mysqli_real_escape_string($conn, $alloy);
-        $typeEsc = mysqli_real_escape_string($conn, $type);
-        $conditionEsc = mysqli_real_escape_string($conn, $condition);
-        $formEsc = mysqli_real_escape_string($conn, $form);
+    if (mysqli_num_rows($checkSql1) > 0) {
+        $info .= "<div class='alert alert-danger'>This material already exists in the database from the same $userType.</div>";
+    } else {
+        // Insert the new material
+        $insertSql = "INSERT INTO materials (material_standard, material_type, alloy, `type`, `condition`, `form`, $sql_field, created_at, updated_at) 
+                      VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), NOW())";
+        $stmt = $conn->prepare($insertSql);
+        $stmt->bind_param(
+            'ssssssi',
+            $materialStandardEsc,
+            $subMaterialEsc,
+            $alloyEsc,
+            $typeEsc,
+            $conditionEsc,
+            $formEsc,
+            $userId
+        );
 
-        // Check if the material with the same details already exists
-        $sql1 = "SELECT * FROM materials WHERE material_standard = '$materialStandardEsc' AND material_type = '$subMaterialEsc' 
-                 AND alloy = '$alloyEsc' AND `type` = '$typeEsc' AND `form` = '$formEsc' AND `condition` = '$conditionEsc' AND $sql_condition";
-        $checkSql1 = mysqli_query($conn, $sql1);
-
-        if (mysqli_num_rows($checkSql1) > 0) {
-            $info .= "<div class='alert alert-danger'>This material already exists in the database from the same $userType.</div>";
+        if ($stmt->execute()) {
+            $info .= "<div class='alert alert-success'>Material added successfully!</div>";
         } else {
-            // Insert the new material
-            $insertSql = "INSERT INTO materials (material_standard, material_type, alloy, `type`, `condition`, `form`, $sql_field, created_at, updated_at) 
-                          VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), NOW())";
-            $stmt = $conn->prepare($insertSql);
-            $stmt->bind_param(
-                'ssssssi',
-                $materialStandardValue,
-                $subMaterialValue,
-                $alloy,
-                $type,
-                $condition,
-                $form,
-                $userId
-            );
-
-            if ($stmt->execute()) {
-                $info .= "<div class='alert alert-success'>Material added successfully!</div>";
-            } else {
-                $info .= "<div class='alert alert-danger'>Error adding material: " . $stmt->error . "</div>";
-            }
+            $info .= "<div class='alert alert-danger'>Error adding material: " . $stmt->error . "</div>";
         }
     }
 }
@@ -94,6 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit'])) {
 // Close the database connection
 $conn->close();
 ?>
+
 
 
 <!DOCTYPE html>
@@ -124,12 +110,13 @@ $conn->close();
     </form>
     <?php echo $show; ?>
   </div>
+  <?php include './footer.php'; ?>
   <!-- jQuery and Bootstrap JS -->
   <script src="./assets/js/jquery-3.6.1.min.js"></script>
   <script src="./assets/js/bootstrap.bundle.min.js"></script>
   <script>
     let page = 'select-materials';
   </script>
-  <script src="./assets/js/script.js?v=2"></script> <!-- Use the updated script.js for dynamic grid -->
+  <script src="./assets/js/script.js?v=2"></script>
 </body>
 </html>

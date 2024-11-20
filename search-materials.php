@@ -1,20 +1,17 @@
 <?php
 require './db_conn.php';
 
-// if (!isLoggedIn()) {
-//   header('Location: ./index.php');
-// }
-
 // Initialize the display variables
 $show = $info = '';
 $userType = isset($_REQUEST['type']) ? $_REQUEST['type'] : 'supplier';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit'])) {
-    $materialStandard = isset($_POST['material_standard']) ? $_POST['material_standard'] : []; // Array of selected raw materials
-    $subMaterials = isset($_POST['sub_material']) ? $_POST['sub_material'] : []; // Array of selected sub-materials
-    $alloys = isset($_POST['alloy']) ? $_POST['alloy'] : []; // Array of selected alloys
-    $conditions = isset($_POST['condition']) ? $_POST['condition'] : []; // Array of selected conditions
-    $forms = isset($_POST['form']) ? $_POST['form'] : []; // Array of selected forms
+    // Ensure the input data is treated as arrays
+    $materialStandard = isset($_POST['material_standard']) ? (array) $_POST['material_standard'] : []; // Convert to array if not already
+    $subMaterials = isset($_POST['sub_material']) ? (array) $_POST['sub_material'] : [];
+    $alloys = isset($_POST['alloy']) ? (array) $_POST['alloy'] : [];
+    $conditions = isset($_POST['condition']) ? (array) $_POST['condition'] : [];
+    $forms = isset($_POST['form']) ? (array) $_POST['form'] : [];
 
     // Convert arrays to comma-separated values for SQL IN query
     $materialStandardStr = implode("','", array_map('trim', $materialStandard));
@@ -46,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['submit'])) {
 
     // Execute the query and display results
     $result = $conn->query($sql);
-    if ($result->num_rows > 0) {
+    if ($result && $result->num_rows > 0) {
         $show .= "<h2 class='text-center mt-4'>Available Materials and " . ucfirst($userType) . "s</h2>";
         $show .= "<table class='table table-bordered'>";
         $show .= "<thead><tr><th>Material Standard</th><th>Sub-Material</th><th>Alloy</th><th>Condition</th><th>Form</th><th>" . ucfirst($userType) . "</th></tr></thead>";
@@ -103,6 +100,7 @@ $conn->close();
             </form>
             <?php echo $show; ?>
         </div>
+        <?php include './footer.php'; ?>
         <!-- jQuery and Bootstrap JS -->
         <script src="./assets/js/jquery-3.6.1.min.js"></script>
         <script src="./assets/js/bootstrap.bundle.min.js"></script>
