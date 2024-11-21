@@ -1,15 +1,24 @@
 <?php
 // db_conn.php
 session_start();
-$servername = "localhost";
-$username = "u956940883_materials";
-$password = "S;64NoYxc";
-$dbname = "u956940883_materials";
 
-// $servername = "localhost";
-// $username = "root";
-// $password = "";
-// $dbname = "material_harbor";
+$envFile = __DIR__ . '/.env';
+if (file_exists($envFile)) {
+    $lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    foreach ($lines as $line) {
+        if (strpos(trim($line), '#') === 0) {
+            continue; // Skip comments
+        }
+        list($key, $value) = explode('=', $line, 2);
+        putenv(trim("$key=$value"));
+    }
+}
+
+// DB environment variables
+$servername = getenv('DB_SERVER');
+$username = getenv('DB_USER');
+$password = getenv('DB_PASS');
+$dbname = getenv('DB_NAME');
 
 // Create connection
 $conn = new mysqli($servername, $username, $password, $dbname);
