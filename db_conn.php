@@ -1,15 +1,15 @@
 <?php
 // db_conn.php
 session_start();
-// $servername = "localhost";
-// $username = "u956940883_materials";
-// $password = "S;64NoYxc";
-// $dbname = "u956940883_materials";
-
 $servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "material_harbor";
+$username = "u956940883_materials";
+$password = "S;64NoYxc";
+$dbname = "u956940883_materials";
+
+// $servername = "localhost";
+// $username = "root";
+// $password = "";
+// $dbname = "material_harbor";
 
 // Create connection
 $conn = new mysqli($servername, $username, $password, $dbname);
