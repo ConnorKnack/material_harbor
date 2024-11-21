@@ -185,9 +185,48 @@ $conn->close();
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Material Harbor</title>
+        <title>Material Harbor -  Login</title>
         <!-- Bootstrap CSS -->
         <link rel="stylesheet" href="./assets/css/bootstrap.min.css">
+        <link rel="stylesheet" href="./assets/css/style.css">
+        <style>
+            body {
+                background: linear-gradient(to right, #e0eafc, #cfdef3);
+                color: #333;
+                font-family: 'Graphik Trial', sans-serif;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                min-height: 100vh;
+                margin: 0;
+                line-height: 1.6;
+            }
+            #authTabs {
+                border-bottom: 2px solid #0047ab;
+                margin-bottom: 1.5rem;
+                }
+
+                .nav-link {
+                color: #555;
+                font-weight: 600;
+                font-size: 1.1rem;
+                border: none;
+                padding: 0.8rem 1.5rem;
+                transition: background-color 0.2s, color 0.2s;
+                }
+
+                .nav-link.active { 
+                background-color: #0047ab;
+                color: #fff;
+                border-radius: 8px 8px 0 0;
+                }
+
+                .nav-link:hover {
+                background-color: #003580;
+                color: #fff;
+                }
+
+        </style>
     </head>
 
     <body>

@@ -107,7 +107,6 @@ if ($userType === 'manufacturer' || $userType === 'supplier') {
     // print_r($materials);
     // Close the statement and connection
     $stmt1->close();
-
     $stmt->close();
 } else {
     $info = "<div class='alert alert-danger'>Invalid user type specified.</div>";
@@ -118,84 +117,158 @@ $conn->close();
 ?>
 <!DOCTYPE html>
 <html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Material Harbor</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="./assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./assets/css/style.css">
+    <style>
+        .profile-card {
+            background: linear-gradient(45deg, #0047ab, #0056e1);
+            color: #fff;
+            border: none;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
 
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Material Harbor</title>
-        <!-- Bootstrap CSS -->
-        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css" />
-        <link rel="stylesheet" href="./assets/css/bootstrap.min.css">
-    </head>
+        .card-title{
+            color: white;
+        }
 
-    <body>
-        <?php
-        include './header.php';
-        ?>
-        <div class="container mt-5 mb-5">
-            <?php echo $info; ?>
-            <?php if (!empty($userData)): ?>
-                <div class="card">
-                    <div class="card-header">
-                        <h4><?php echo ucfirst($userType); ?> Profile</h4>
-                    </div>
-                    <div class="card-body">
-                        <h5 class="card-title fw-bold text-decoration-underline">
-                            <?php echo htmlspecialchars($userData['company_name']); ?>
-                        </h5>
-                        <p class="card-text"><strong>Location:</strong>
-                            <?php echo htmlspecialchars($userData['location']); ?></p>
-                        <p class="card-text"><strong>Email:</strong> <?php echo htmlspecialchars($userData['email']); ?></p>
-                        <p class="card-text"><strong>Phone:</strong>
-                            <?php echo htmlspecialchars($userData['contact_phone']); ?></p>
-                        <p class="card-text"><strong>Offers:</strong> <?php echo htmlspecialchars($userData['offers']); ?>
-                        </p>
-                        <p class="card-text"><strong>Certification:</strong>
-                            <?php echo htmlspecialchars($userData['certification']); ?>
-                        </p>
-                        <p class="card-text"><strong>Description:</strong>
-                            <?php echo htmlspecialchars($userData['description']); ?></p>
-                    </div>
+        .profile-card .card-header {
+            background-color: rgba(0, 71, 171, 0.8);
+            padding: 1.5rem;
+        }
+
+        .profile-card h4 {
+            margin-bottom: 0;
+            font-weight: 900;
+        }
+
+        .profile-card .card-body {
+            padding: 2rem;
+        }
+
+        .profile-card .card-body p {
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .materials-table {
+            margin-top: 2rem;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .materials-table thead {
+            background-color: #0047ab;
+            color: #fff;
+        }
+
+        .materials-table tbody tr:hover {
+            background-color: rgba(0, 71, 171, 0.1);
+        }
+
+        .add-material-btn {
+            margin-bottom: 1rem;
+            text-align: right;
+        }
+
+        @media (max-width: 768px) {
+            .profile-card .card-body p {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <?php include './header.php'; ?>
+
+    <div class="container mt-5 mb-5">
+        <?php echo $info; ?>
+        <?php if (!empty($userData)): ?>
+            <div class="card profile-card">
+                <div class="card-header">
+                    <h4><?php echo ucfirst($userType); ?> Profile</h4>
                 </div>
-            <?php else: ?>
-                <div class="alert alert-danger">No profile data available.</div>
-            <?php endif; ?>
-            <?php if ($userType == 'supplier' || $userType == 'manufacturer'): ?>
-                <h4 class="mt-5 text-center fw-bold mb-4">Materials Offered by
-                    <?php echo htmlspecialchars($userData['company_name']); ?></h4>
-                <?php
-                $actionTh = ($ownProfile) ? "<th>Action</th>" : "";
-                echo "<table class='table table-bordered' id='dataTable'>";
-                echo "<thead><tr><th>Material Standard</th><th>Material Type</th><th>Alloy</th><th>Type</th><th>Condition</th><th>Form</th>" . $actionTh . "</tr></thead>";
-                echo "<tbody>";
-                foreach ($materials as $material) {
-                    echo "<tr>";
-                    echo "<td>" . htmlspecialchars($material['material_standard']) . "</td>";
-                    echo "<td>" . htmlspecialchars($material['material_type']) . "</td>";
-                    echo "<td>" . htmlspecialchars($material['alloy']) . "</td>";
-                    echo "<td>" . htmlspecialchars($material['type']) . "</td>";
-                    echo "<td>" . htmlspecialchars($material['condition']) . "</td>";
-                    echo "<td>" . htmlspecialchars($material['form']) . "</td>";
-                    if ($ownProfile == true) {
-                        // <a href='edit-material.php?materialId=".$material['id']."' class='btn btn-primary btn-sm'>Edit</a>
-                        echo "<td><span class='d-flex gap-1'><a onclick='return confirm(\"Do you really want to delete the material?\")' href='?userType=" . $userType . "&userID=" . $userID . "&deleteMaterialId=" . $material['id'] . "' class='btn btn-danger btn-sm'>Delete</a></span></td>";
-                    }
-                    echo "</tr>";
-                }
-                echo "</tbody>";
-                echo "</table>";
-                ?>
-            <?php endif; ?>
-        </div>
-        <!-- jQuery and Bootstrap JS -->
-        <script src="./assets/js/jquery-3.6.1.min.js"></script>
-        <!-- DataTables CSS and JS CDN -->
-        <script type="text/javascript" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
-        <script src="./assets/js/bootstrap.bundle.min.js"></script>
-        <script src="./assets/js/script.js?v=2"></script>
-        <script>
-            $('#dataTable').DataTable();
-        </script>
-    </body>
+                <div class="card-body">
+                    <h5 class="card-title"><?php echo htmlspecialchars($userData['company_name'] ?? ''); ?></h5>
+                    <p><strong>Location:</strong> <?php echo htmlspecialchars($userData['location'] ?? ''); ?></p>
+                    <p><strong>Email:</strong> <?php echo htmlspecialchars($userData['email'] ?? ''); ?></p>
+                    <p><strong>Phone:</strong> <?php echo htmlspecialchars($userData['contact_phone'] ?? ''); ?></p>
+                    <p><strong>Offers:</strong> <?php echo htmlspecialchars($userData['offers'] ?? ''); ?></p>
+                    <p><strong>Certification:</strong> <?php echo htmlspecialchars($userData['certification'] ?? ''); ?></p>
+                    <p><strong>Description:</strong> <?php echo htmlspecialchars($userData['description'] ?? ''); ?></p>
+                </div>
+            </div>
+        <?php else: ?>
+            <div class="alert alert-danger">No profile data available.</div>
+        <?php endif; ?>
 
+        <?php if (!empty($materials)): ?>
+            <h4 class="mt-5 text-center fw-bold">Materials Offered by <?php echo htmlspecialchars($userData['company_name'] ?? ''); ?></h4>
+            <?php if ($ownProfile): ?>
+                <div class="add-material-btn">
+                    <a href="select-materials.php?userType=<?php echo $userType; ?>&userID=<?php echo $userID; ?>" class="btn btn-success">Add New Material</a>
+                </div>
+            <?php endif; ?>
+            <div class="table-responsive materials-table">
+                <table class="table table-bordered" id="dataTable">
+                    <thead>
+                        <tr>
+                            <th>Material Standard</th>
+                            <th>Material Type</th>
+                            <th>Alloy</th>
+                            <th>Type</th>
+                            <th>Condition</th>
+                            <th>Form</th>
+                            <?php if ($ownProfile): ?>
+                                <th>Action</th>
+                            <?php endif; ?>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($materials as $material): ?>
+                            <tr>
+                                <td><?php echo htmlspecialchars($material['material_standard'] ?? ''); ?></td>
+                                <td><?php echo htmlspecialchars($material['material_type'] ?? ''); ?></td>
+                                <td><?php echo htmlspecialchars($material['alloy'] ?? ''); ?></td>
+                                <td><?php echo htmlspecialchars($material['type'] ?? ''); ?></td>
+                                <td><?php echo htmlspecialchars($material['condition'] ?? ''); ?></td>
+                                <td><?php echo htmlspecialchars($material['form'] ?? ''); ?></td>
+                                <?php if ($ownProfile): ?>
+                                    <td>
+                                        <div class="d-flex gap-2">
+                                            <a href="edit-material.php?materialId=<?php echo $material['id']; ?>" class="btn btn-primary btn-sm">Edit</a>
+                                            <a onclick="return confirm('Do you really want to delete the material?')" 
+                                            href="?userType=<?php echo $userType; ?>&userID=<?php echo $userID; ?>&deleteMaterialId=<?php echo $material['id']; ?>" 
+                                            class="btn btn-danger btn-sm">Delete</a>
+                                        </div>
+                                    </td>
+                                <?php endif; ?>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        <?php else: ?>
+            <div class="alert alert-info text-center mt-5">No materials have been added yet.</div>
+        <?php endif; ?>
+    </div>
+
+    <?php include './footer.php'; ?>
+
+    <!-- jQuery and Bootstrap JS -->
+    <script src="./assets/js/jquery-3.6.1.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script src="./assets/js/bootstrap.bundle.min.js"></script>
+    <script>
+        $('#dataTable').DataTable();
+    </script>
+</body>
 </html>
