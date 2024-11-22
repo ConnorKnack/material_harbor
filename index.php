@@ -26,6 +26,34 @@ if (isLoggedIn()) {
             margin: 0;
             line-height: 1.6;
         }
+
+        .container{
+            margin-bottom: 80px;
+        }
+        .card {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%; /* Ensures cards have the same height */
+        }
+
+        .card-body {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .card-title {
+            margin-bottom: 15px;
+        }
+
+        .card-text {
+            flex-grow: 1;
+        }
+
+        .btn {
+            margin-top: auto;
+        }
     </style>
 </head>
 
@@ -56,6 +84,14 @@ if (isLoggedIn()) {
                 </div>
             </div>
         </div>
+        
+        <!-- New Heading -->
+        <div class="row justify-content-center mt-4">
+            <div class="col-12 text-center">
+                <h2 class="mt-3">Search as a Guest</h2>
+            </div>
+        </div>
+        
         <div class="row g-4 justify-content-center mt-4">
             <div class="col-lg-4 col-md-6">
                 <div class="card h-100">

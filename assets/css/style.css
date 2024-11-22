@@ -1,7 +1,7 @@
 @import url("https://fonts.cdnfonts.com/css/graphik-trial");
 
 body {
-  background: white;
+  background: linear-gradient(to right, #e0eafc, #cfdef3);
   font-family: "Graphik Trial", sans-serif;
 }
 
