@@ -49,10 +49,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['signup'])) {
             $otp = rand(100000, 999999); // Generate a 6-digit OTP
 
             // Insert the new user into the appropriate table with OTP
-            $insertSql = "INSERT INTO $table (company_name, location, email, contact_phone, offers, description, certification, password, otp, enable_2fa, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())";
+            $insertSql = "INSERT INTO $table (company_name, location, email, contact_phone, offers, description, certification, password, userActive, enable_2fa, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1, ?, NOW(), NOW())";
+
             $stmt = $conn->prepare($insertSql);
 
-            $stmt->bind_param('sssssssssi', $company, $location, $email, $phone, $offers, $description, $certification, $password, $otp, $enable_2fa);
+            $stmt->bind_param('ssssssssi', $company, $location, $email, $phone, $offers, $description, $certification, $password, $enable_2fa);
 
             if ($stmt->execute()) {
                 $userId = $conn->insert_id;
@@ -83,11 +84,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['signup'])) {
                 $_SESSION['email'] = $email;
                 $_SESSION['userId'] = $userId;
                 $_SESSION['companyName'] = $company;
-                $_SESSION['userActive'] = false;
+                $_SESSION['userActive'] = true;
                 $_SESSION['2fa_passed'] = true;
 
                 // Redirect to the verify-user.php page
-                header('Location: verify-email.php');
+                header('Location: select-materials.php');
                 exit();
             } else {
                 $info = "<div class='alert alert-danger'>Error: " . $stmt->error . "</div>";
@@ -143,7 +144,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['signup'])) {
                 exit();
             } else {
                 // User is inactive, generate and send OTP
-                $otp = rand(100000, 999999); // Generate a 6-digit OTP
+                // $otp = rand(100000, 999999); // Generate a 6-digit OTP
                 $updateSql = "UPDATE $table SET otp = ? WHERE email = ?";
                 $updateStmt = $conn->prepare($updateSql);
 
