@@ -166,11 +166,7 @@ $conn->close();
                             <input type="text" class="form-control" id="contact_phone" name="contact_phone"
                                    value="<?php echo htmlspecialchars($userData['contact_phone'] ?? ''); ?>" required>
                         </div>
-                        <div class="mb-3">
-                            <label for="offers" class="form-label">Offers</label>
-                            <input type="text" class="form-control" id="offers" name="offers"
-                                   value="<?php echo htmlspecialchars($userData['offers'] ?? ''); ?>">
-                        </div>
+                        <input type="hidden" name="offers" value="Aluminum">
                         <div class="mb-3">
                             <label for="certification" class="form-label">Certification</label>
                             <input type="text" class="form-control" id="certification" name="certification"

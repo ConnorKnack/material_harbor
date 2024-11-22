@@ -291,34 +291,7 @@ $conn->close();
                                     <input type="text" class="form-control" required id="signupPhone" name="signupPhone"
                                         placeholder="Enter contact phone number">
                                 </div>
-                                <div class="mb-3">
-                                    <label for="signupOffers" class="form-label">What the company offers</label>
-                                    <select class="form-control form-select" required id="signupOffers"
-                                        name="signupOffers">
-                                        <option value="">Select from list...</option>
-                                        <option value="Aluminum">Aluminum</option>
-                                        <option value="ALClad">ALClad</option>
-                                        <option value="Stainless Steel">Stainless Steel</option>
-                                        <option value="Steel">Steel</option>
-                                        <option value="Titanium">Titanium</option>
-                                        <option value="Carbon">Carbon</option>
-                                        <option value="Epoxy">Epoxy</option>
-                                        <option value="Fiberglass">Fiberglass</option>
-                                        <option value="Glass">Glass</option>
-                                        <option value="Phenolic">Phenolic</option>
-                                        <option value="Resin">Resin</option>
-                                        <option value="Plastic">Plastic</option>
-                                        <option value="Rubber/ Elastomer">Rubber/ Elastomer</option>
-                                        <option value="Milled part">Milled part</option>
-                                        <option value="Casting">Casting</option>
-                                        <option value="Weldment">Weldment</option>
-                                        <option value="3D Printing">3D Printing</option>
-                                        <option value="Machining">Machining</option>
-                                        <option value="Forging">Forging</option>
-                                        <option value="Molding">Molding</option>
-                                        <option value="Etc.">Etc.</option>
-                                    </select>
-                                </div>
+                                
                                 <div class="mb-3">
                                     <label for="signupCertification" class="form-label">Certification</label>
                                     <select class="form-control form-select" required id="signupCertification"
@@ -358,6 +331,7 @@ $conn->close();
                                             authentication on login? </label>
                                     </div>
                                 </div>
+                                <input type="hidden" name="signupOffers" value="Aluminum">
                                 <div class="d-grid">
                                     <button type="submit" name="signup" class="btn btn-success">Sign Up</button>
                                 </div>

@@ -26,6 +26,30 @@ if (isLoggedIn()) {
             margin: 0;
             line-height: 1.6;
         }
+        .card {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%; /* Ensures cards have the same height */
+        }
+
+        .card-body {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .card-title {
+            margin-bottom: 15px; /* Adds space between title and content */
+        }
+
+        .card-text {
+            flex-grow: 1; /* Ensures content stretches to maintain alignment */
+        }
+
+        .btn {
+            margin-top: auto; /* Pushes buttons to the bottom of the card */
+        }
     </style>
 </head>
 

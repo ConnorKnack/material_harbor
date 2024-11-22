@@ -201,7 +201,7 @@ $conn->close();
                     <p><strong>Location:</strong> <?php echo htmlspecialchars($userData['location'] ?? ''); ?></p>
                     <p><strong>Email:</strong> <?php echo htmlspecialchars($userData['email'] ?? ''); ?></p>
                     <p><strong>Phone:</strong> <?php echo htmlspecialchars($userData['contact_phone'] ?? ''); ?></p>
-                    <p><strong>Offers:</strong> <?php echo htmlspecialchars($userData['offers'] ?? ''); ?></p>
+                    <!-- <p><strong>Offers:</strong> <?php echo htmlspecialchars($userData['offers'] ?? ''); ?></p> -->
                     <p><strong>Certification:</strong> <?php echo htmlspecialchars($userData['certification'] ?? ''); ?></p>
                     <p><strong>Description:</strong> <?php echo htmlspecialchars($userData['description'] ?? ''); ?></p>
                 </div>
